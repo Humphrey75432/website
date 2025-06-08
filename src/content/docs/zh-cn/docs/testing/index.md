@@ -23,13 +23,16 @@ func setupRouter() *gin.Engine {
 	router.GET("/ping", func(c *gin.Context) {
 		c.String(200, "pong")
 	})
-	return r
+	return router
 }
 
 func postUser(r *gin.Engine) *gin.Engine {
-	router.POST("/user/add", func(c *gin.Context) {
+	r.POST("/user/add", func(c *gin.Context) {
 		var user User
-		c.BindJSON(&user)
+		if err := c.BindJSON(&user); err != nil {
+			c.JSON(400, gin.H{"error": err.Error()})
+			return
+		}
 		c.JSON(200, user)
 	})
 	return r
